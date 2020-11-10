@@ -29,19 +29,53 @@ class Snail(arcade.View):
 
         self.Movemment = 80
         self.state = "GameMenu"
+    def slip_up(self , x , y , i , j):
+        for x in range(x , 0 , -1):
+            if(x - 1 == 0):
+                return x-1 , y
+            if self.board[x-1][y] == 0 or self.board[x-1][y]==i or self.board[x-1][y]==j:
+                return x , y
+    def slip_down(self , x , y , i ,j):
+        for x in range(x , 9 , 1):
+            if(x + 1 == 9):
+                return x+1 , y
+            if self.board[x+1][y] == 0 or self.board[x+1][y]==i or self.board[x+1][y]==j:
+                return x , y
+    
+    def slip_left(self , x , y , i ,j):
+        for y in range(y , 0 , -1):
+            if(y - 1 == 0):
+                return x , y-1
+            if self.board[x][y-1] == 0 or self.board[x][y-1]==i or self.board[x][y-1]==j:
+                return x , y
+    def slip_right(self , x , y , i ,j):
+        for y in range(y , 9 , 1):
+            if(y + 1 == 9):
+                return x , y+1
+            if self.board[x][y+1] == 0 or self.board[x][y+1]==i or self.board[x][y+1]==j:
+                return x , y
+
     def on_key_press(self , key , modifiers):
         if self.state == "GameMenu":
-            if key:
+            if key == arcade.key.SPACE:
                 self.state = "GameOn"
         if self.state == "GameOn":
             if key == arcade.key.ESCAPE:
                 exit(0)
             if self.turn == 1:
+                self.turn = 2
+                self.i = 22
+                self.j = 2
                 x , y = self.get_human_pos()
+                        
                 if key == arcade.key.UP:
-                    if x == 0 or self.board[x-1] == 2 or self.board[x-1] == 11 or self.board[x-1] == 22:
-                        pass
-                        print("invalid move")
+                    if(x==0 and self.board[x][y]==1):
+                            self.board[x][y] = 1
+
+                    elif self.board[x-1][y] == 11:
+                            self.board[x][y] = 11
+                            x , y = self.slip_up(x , y , self.i , self.j)
+                            self.board[x][y] = 1
                     
                     elif self.board[x-1][y] == 0:
                         
@@ -51,11 +85,14 @@ class Snail(arcade.View):
 
                     
                 elif key == arcade.key.DOWN:
-                    
+                    if(x==9 and self.board[x][y]==1):
+                            self.board[x][y] = 1
+ 
                     # x , y = self.get_human_pos()
-                    if x == 9 or self.board[x+1] == 2 or self.board[x+1] == 11 or self.board[x+1] == 22:
-
-                        pass
+                    elif(self.board[x+1][y] == 11):
+                        self.board[x][y] = 11
+                        x , y = self.slip_down(x , y , self.i , self.j)
+                        self.board[x][y] = 1
                         # raise Exception("Invalid Move")
                         
                     elif self.board[x+1][y] == 0:
@@ -64,85 +101,101 @@ class Snail(arcade.View):
                         self.board[x+1][y] = 1
                             
                 elif key == arcade.key.LEFT:
-                    # x , y = self.get_human_pos()
-                    if y == 0 or self.board[y-1] == 2 or self.board[y-1] == 11 or self.board[y-1] == 22:
-                        pass
+                    if(y==0 and self.board[x][y]==1):
+                            self.board[x][y] = 1
 
-                            
+                    elif(self.board[x][y-1] == 11):
+                        self.board[x][y] = 11
+                        x , y = self.slip_left(x , y , self.i , self.j)
+                        self.board[x][y] = 1
+                   
                     elif self.board[x][y-1] == 0:
-
                         self.board[x][y] = 11
                         self.board[x][y-1] = 1
 
                 elif key == arcade.key.RIGHT:
-                    # x , y = self.get_human_pos()
-                    if y== 9 or self.board[y+1] == 2 or self.board[y+1] == 11 or self.board[y+1] == 22:        
-                        pass
+                    if(y==9 and self.board[x][y]==1):
+                            self.board[x][y] = 1
 
+                    elif(self.board[x][y+1] == 11):
+                        self.board[x][y] = 11
+                        x , y = self.slip_right(x , y , self.i , self.j)
+                        self.board[x][y] = 1
                     elif self.board[x][y+1] == 0:
                         self.board[x][y] = 11
                         self.board[x][y+1] = 1
-                self.turn = 2
+                
             elif self.turn == 2:
+                self.turn=1
+                self.i = 11
+                self.j = 1
                 x , y = self.get_bot_pos()
                 if key == arcade.key.UP:
-                    if x == 0 or self.board[x-1] == 1 or self.board[x-1] == 11 or self.board[x-1] == 22:
-                        pass
-                        print("invalid move")
-
+                    if(x==0 and self.board[x][y]==2):
+                            self.board[x][y] = 2
+                    elif self.board[x-1][y] == 22:
+                            self.board[x][y] = 22
+                            x , y = self.slip_up(x , y , self.i , self.j)
+                            self.board[x][y] = 2
                     elif self.board[x-1][y] == 0:
-                        
                         self.board[x][y] = 22
                         self.board[x-1][y] = 2
-                        
 
-                    
                 elif key == arcade.key.DOWN:
-                    
-                    # x , y = self.get_human_pos()
-                    if x == 9 or self.board[x+1] == 1 or self.board[x+1] == 11 or self.board[x+1] == 22:
+                    if(x==9 and self.board[x][y]==2):
+                            self.board[x][y] = 2                    
+                    elif self.board[x+1][y] == 22:
 
-                        pass
+                        self.board[x][y] = 22
+                        x , y = self.slip_down(x , y , self.i , self.j)
+                        self.board[x][y] = 2
+              
                     elif self.board[x+1][y] == 0:
                             
                         self.board[x][y] = 22
                         self.board[x+1][y] = 2
                             
                 elif key == arcade.key.LEFT:
-                    # x , y = self.get_human_pos()
-                    if y == 0 or self.board[y-1] == 1 or self.board[y-1] == 11 or self.board[y-1] == 22:
-                        pass
+                    if(y==0 and self.board[x][y]==2):
+                            self.board[x][y] = 2
+                    elif self.board[x][y-1] == 22:
 
+                        self.board[x][y] = 22
+                        x , y = self.slip_left(x , y , self.i , self.j)
+                        self.board[x][y] = 2
+                    
                     elif self.board[x][y-1] == 0:
 
                         self.board[x][y] = 22
                         self.board[x][y-1] = 2
 
                 elif key == arcade.key.RIGHT:
-                    # x , y = self.get_human_pos()
-                    if y== 9 or self.board[y+1] == 1 or self.board[y+1] == 11 or self.board[y+1] == 22:        
-                        pass
-                
+                    if(y==9 and self.board[x][y]==2):
+                            self.board[x][y] = 2                    # x , y = self.get_human_pos()
+                    elif self.board[x][y+1] == 22:
+
+                        self.board[x][y] = 22
+                        x , y = self.slip_right(x , y ,self.i , self.j)
+                        self.board[x][y] = 2
+
+                    
                             
                     elif self.board[x][y+1] == 0:
 
                         self.board[x][y] = 22
                         self.board[x][y+1] = 2
-                self.turn = 1
-            # else:
-            #     raise Exception("Invalid Move")
-
+                
     def get_human_pos(self):
         for row in range(len(self.board)):
             for col in range(len(self.board)):
                 if self.board[row][col] == 1:
-                    print (row, col)
+                    # print (row, col)
                     return row , col
     def get_bot_pos(self):
         for row in range(len(self.board)):
             for col in range(len(self.board)):
                 if self.board[row][col] == 2:
-                    print(row , col)
+                    # print(row , col)
                     return row , col
  
 
