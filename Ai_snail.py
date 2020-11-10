@@ -24,9 +24,11 @@ class Snail(arcade.View):
         self.human1splash = 11
         self.human2splash = 22
         self.turn = 1
+        self.count1 = 0
+        self.count2 = 0
         # self.human2sprite = arcade.sprite("red_pac.png" , 0.5)
         # self.human1sprite = arcade.sprite("yellow_pac.png" , 0.5)
-
+        self.win = "0"
         self.Movemment = 80
         self.state = "GameMenu"
     def slip_up(self , x , y , i , j):
@@ -54,8 +56,30 @@ class Snail(arcade.View):
                 return x , y+1
             if self.board[x][y+1] == 0 or self.board[x][y+1]==i or self.board[x][y+1]==j:
                 return x , y
+    def score(self):
+        self.count1=0
+        self.count2=0
+        for i in range(0,10):
+            for j in range(0,10):
+                #  if self.board[i][j] != 0:
+                #      self.state = "GameOver"
+                if self.board[i][j] == 11:
+                    self.count1 = self.count1 + 1
+                    
+                elif self.board[i][j] == 22:
+                    self.count2 = self.count2 + 1
+
+                elif self.count1 >= 49 or self.count2 >= 49 and self.board[i][j] != 0:
+                    self.state = "GameOver"
+
+                elif self.board[i][j] == 0:
+                    self.state = "GameOn"
+                
+
+                
 
     def on_key_press(self , key , modifiers):
+        
         if self.state == "GameMenu":
             if key == arcade.key.SPACE:
                 self.state = "GameOn"
@@ -124,7 +148,8 @@ class Snail(arcade.View):
                     elif self.board[x][y+1] == 0:
                         self.board[x][y] = 11
                         self.board[x][y+1] = 1
-                
+                self.score()
+                # self.check_win()
             elif self.turn == 2:
                 self.turn=1
                 self.i = 11
@@ -184,7 +209,23 @@ class Snail(arcade.View):
 
                         self.board[x][y] = 22
                         self.board[x][y+1] = 2
-                
+                self.score()
+                # self.check_win()
+        if self.state == "GameOver":
+            self.check_win()
+              
+    def check_win(self):
+        if self.count1 > 49:
+            self.win = "Player_1"
+        elif self.count2 > 49:
+            self.win = "Player_2"
+        else:
+            for i in range(len(self.board)):
+                for j in range(len(self.board)):
+                    if self.board[i][j] != 0:
+
+                        self.win = "draw"
+
     def get_human_pos(self):
         for row in range(len(self.board)):
             for col in range(len(self.board)):
@@ -197,7 +238,6 @@ class Snail(arcade.View):
                 if self.board[row][col] == 2:
                     # print(row , col)
                     return row , col
- 
 
     def on_show(self):
         # arcade.set_background_color(arcade.color.APPLE_GREEN)
@@ -207,9 +247,19 @@ class Snail(arcade.View):
         arcade.draw_lrwh_rectangle_textured(0 , 0 , 1100 , 800 , background)
         if self.state == "GameMenu":
             arcade.draw_text("Snails Game" , 550 , 400 , arcade.color.WHITE , font_size=50 , anchor_x="center")
-            arcade.draw_text("Press key to start the Game" , 550 , 500 , arcade.color.WHITE , font_size=30 , anchor_x="center")
+            arcade.draw_text("Press any key to start the Game" , 550 , 300 , arcade.color.WHITE , font_size=30 , anchor_x="center")
         
         elif self.state == "GameOn":
+            heading1 = f" Score of Player 1"
+            heading2 = f" Score of Player 2"
+            score1 = f"{self.count1}"
+            score2 = f"{self.count2}"
+            arcade.draw_text(heading1 , 820 , 700 , arcade.color.WHITE , font_size = 20 , anchor_y="center")
+            arcade.draw_text(heading2 , 820 , 600 , arcade.color.WHITE , font_size = 20 , anchor_y="center")
+            arcade.draw_text(score1 , 830 , 650 , arcade.color.WHITE , font_size = 40 , anchor_y="center")
+            arcade.draw_text(score2 , 830 , 550 , arcade.color.WHITE , font_size = 40 , anchor_y="center")
+
+
             turn=f"Turn : Player {self.turn}"
             arcade.draw_text(turn , 830 , 100 ,arcade.color.WHITE,font_size=30,anchor_y='center')
             for i in range(11):
@@ -228,10 +278,29 @@ class Snail(arcade.View):
 
                     elif self.board[row][col] == 22:
                         arcade.draw_lrwh_rectangle_textured( (col*80)+10 , 720-(80*row)+10 , 65 , 65 ,human2splash)
-                    
+        elif self.state == "GameOver":
+            
+            if self.win == "Player_1":
 
-                     
+                arcade.draw_text("Player 1 Wins!" , 550, 400, arcade.color.WHITE, font_size=40, anchor_x="center")
+                arcade.draw_text("Click to continue", 550, 250, arcade.color.WHITE, font_size=20, anchor_x="center")
+                
+                
+            if self.win == "Player_2":
+                arcade.draw_text("Player 2 Wins!", 550 , 400, arcade.color.WHITE, font_size=100, anchor_x="center")
+                arcade.draw_text("Click to continue", 550, 250, arcade.color.WHITE, font_size=50, anchor_x="center")
 
+            if self.win == "draw":
+                arcade.draw_text("It's a draw..", 550, 400, arcade.color.WHITE, font_size=50, anchor_x="center")
+                arcade.draw_text("Click to continue", 550, 250, arcade.color.WHITE, font_size=20, anchor_x="center")    
+            # self.state = "GameMenu"
+            # self.win = "0"
+
+    def on_mouse_press(self, x, y, _button, _modifiers):
+        if self.state == "GameOver":
+            # self.win = "0"
+            # self.state = "GameMenu"
+            self.__init__()
 
 
 if __name__ == "__main__":
