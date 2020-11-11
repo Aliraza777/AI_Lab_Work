@@ -69,11 +69,6 @@ class Snail(arcade.View):
                 elif self.board[i][j] == 22:
                     self.count2 = self.count2 + 1
 
-                elif self.count1 >= 49 or self.count2 >= 49 and self.board[i][j] != 0:
-                    self.state = "GameOver"
-
-                elif self.board[i][j] == 0:
-                    self.state = "GameOn"
                 
 
                 
@@ -149,7 +144,7 @@ class Snail(arcade.View):
                         self.board[x][y] = 11
                         self.board[x][y+1] = 1
                 self.score()
-                # self.check_win()
+                self.check_win()
             elif self.turn == 2:
                 self.turn=1
                 self.i = 11
@@ -211,20 +206,25 @@ class Snail(arcade.View):
                         self.board[x][y+1] = 2
                 self.score()
                 # self.check_win()
-        if self.state == "GameOver":
-            self.check_win()
+        
+                self.check_win()
               
     def check_win(self):
         if self.count1 > 49:
+            self.state='GameOver'
             self.win = "Player_1"
         elif self.count2 > 49:
+            self.state = "GameOver"
             self.win = "Player_2"
-        else:
-            for i in range(len(self.board)):
-                for j in range(len(self.board)):
-                    if self.board[i][j] != 0:
+        elif self.count1 == 49 and self.count2 == 49:
+            self.state = "GameOver"
+            self.win = "draw"
+        # else:
+        #     for i in range(len(self.board)):
+        #         for j in range(len(self.board)):
+        #             if self.board[i][j] != 0:
 
-                        self.win = "draw"
+        #                 self.win = "draw"
 
     def get_human_pos(self):
         for row in range(len(self.board)):
@@ -282,8 +282,8 @@ class Snail(arcade.View):
             
             if self.win == "Player_1":
 
-                arcade.draw_text("Player 1 Wins!" , 550, 400, arcade.color.WHITE, font_size=40, anchor_x="center")
-                arcade.draw_text("Click to continue", 550, 250, arcade.color.WHITE, font_size=20, anchor_x="center")
+                arcade.draw_text("Player 1 Wins!" , 550, 400, arcade.color.WHITE, font_size=100, anchor_x="center")
+                arcade.draw_text("Click to continue", 550, 250, arcade.color.WHITE, font_size=50, anchor_x="center")
                 
                 
             if self.win == "Player_2":
