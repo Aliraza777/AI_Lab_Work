@@ -10,6 +10,7 @@ class Snail(arcade.View):
     def __init__(self):
         super().__init__()
         self.board = []
+        self.tempboard = []
         for i in range(10):
             cols =[]
             for j in range(10):
@@ -35,7 +36,7 @@ class Snail(arcade.View):
         for x in range(x , 0 , -1):
             if(x - 1 == 0):
                 return x-1 , y
-            if self.board[x-1][y] == 0 or self.board[x-1][y]==i or self.board[x-1][y]==j:
+            if self.board[x-1][y] == 0 or self.board[x-1][y]== i or self.board[x-1][y]==j:
                 return x , y
     def slip_down(self , x , y , i ,j):
         for x in range(x , 9 , 1):
@@ -88,7 +89,7 @@ class Snail(arcade.View):
                 x , y = self.get_human_pos()
                         
                 if key == arcade.key.UP:
-                    if(x==0 and self.board[x][y]==1):
+                    if(x==0 and self.board[x][y] == 1):
                             self.board[x][y] = 1
 
                     elif self.board[x-1][y] == 11:
@@ -150,6 +151,7 @@ class Snail(arcade.View):
                 self.i = 11
                 self.j = 1
                 x , y = self.get_bot_pos()
+                
                 if key == arcade.key.UP:
                     if(x==0 and self.board[x][y]==2):
                             self.board[x][y] = 2
@@ -204,6 +206,7 @@ class Snail(arcade.View):
 
                         self.board[x][y] = 22
                         self.board[x][y+1] = 2
+
                 self.score()
                 # self.check_win()
         
@@ -233,12 +236,14 @@ class Snail(arcade.View):
                     # print (row, col)
                     return row , col
     def get_bot_pos(self):
+        self.c_position = ''
         for row in range(len(self.board)):
             for col in range(len(self.board)):
                 if self.board[row][col] == 2:
-                    # print(row , col)
-                    return row , col
-
+                    return row ,col
+                    
+                # print(self.tempboard)
+                # print(c_position)
     def on_show(self):
         # arcade.set_background_color(arcade.color.APPLE_GREEN)
         pass
