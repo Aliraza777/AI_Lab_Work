@@ -70,7 +70,45 @@ class Snail(arcade.View):
                 elif self.board[i][j] == 22:
                     self.count2 = self.count2 + 1
 
-                
+    def possible_move(self , x , y , i , j):
+           
+        if(((i-1 == x and x >= 0) or (i+1 == x and x <= 9)) and j == y):
+            return True
+        elif(((j-1 == y and y >= 0 )or (j+1 == y and y <= 9)) and i == x):
+            return True
+        return False
+    def heuristic(self , x , y):
+        temp = 100
+        best_x = None
+        best_y = None
+        #best serach to reach oppenet using empty spaces
+        for i in range(0 , 10):
+            for j in range(0 , 10):
+                if(self.board[i][j] == 0):
+                    valid=self.possible_move(x , y , i , j)
+                    if(valid == True):
+                        # temp=h
+                        best_x = i
+                        best_y = j
+                        # hx,hy=self.get_human_pos()
+                        # h=abs(i-hx)+abs(j-hy)
+                        # if(temp>h):
+                     
+        #if there is no  empty sapce then slip
+        # if(best_x==None):
+        #     for i in range(0,10):
+        #         for j in range(0,10):
+        #             if(board[i][j]==22):
+        #                 valid=self.possible_move(x,y,i,j)
+        #                 if(valid==True):
+        #                     hx,hy=self.get_human_pos()
+        #                     h=abs(i-hx)+abs(j-hy)
+        #                     if(temp>h):
+        #                         temp=h
+        #                         best_x=i
+        #                         best_y=j
+            
+        return (best_x , best_y)        
 
                 
 
@@ -152,60 +190,63 @@ class Snail(arcade.View):
                 self.j = 1
                 x , y = self.get_bot_pos()
                 
-                if key == arcade.key.UP:
-                    if(x==0 and self.board[x][y]==2):
-                            self.board[x][y] = 2
-                    elif self.board[x-1][y] == 22:
-                            self.board[x][y] = 22
-                            x , y = self.slip_up(x , y , self.i , self.j)
-                            self.board[x][y] = 2
-                    elif self.board[x-1][y] == 0:
-                        self.board[x][y] = 22
-                        self.board[x-1][y] = 2
+                qx , qy = self.heuristic(x , y) 
+                self.board[qx][qy] = 2
+                self.board[x][y] = 22               
+                # if key == arcade.key.UP:
+                #     if(x==0 and self.board[x][y]==2):
+                #             self.board[x][y] = 2
+                #     elif self.board[x-1][y] == 22:
+                #             self.board[x][y] = 22
+                #             x , y = self.slip_up(x , y , self.i , self.j)
+                #             self.board[x][y] = 2
+                #     elif self.board[x-1][y] == 0:
+                #         self.board[x][y] = 22
+                #         self.board[x-1][y] = 2
 
-                elif key == arcade.key.DOWN:
-                    if(x==9 and self.board[x][y]==2):
-                            self.board[x][y] = 2                    
-                    elif self.board[x+1][y] == 22:
+                # elif key == arcade.key.DOWN:
+                #     if(x==9 and self.board[x][y]==2):
+                #             self.board[x][y] = 2                    
+                #     elif self.board[x+1][y] == 22:
 
-                        self.board[x][y] = 22
-                        x , y = self.slip_down(x , y , self.i , self.j)
-                        self.board[x][y] = 2
+                #         self.board[x][y] = 22
+                #         x , y = self.slip_down(x , y , self.i , self.j)
+                #         self.board[x][y] = 2
               
-                    elif self.board[x+1][y] == 0:
+                #     elif self.board[x+1][y] == 0:
                             
-                        self.board[x][y] = 22
-                        self.board[x+1][y] = 2
+                #         self.board[x][y] = 22
+                #         self.board[x+1][y] = 2
                             
-                elif key == arcade.key.LEFT:
-                    if(y==0 and self.board[x][y]==2):
-                            self.board[x][y] = 2
-                    elif self.board[x][y-1] == 22:
+                # elif key == arcade.key.LEFT:
+                #     if(y==0 and self.board[x][y]==2):
+                #             self.board[x][y] = 2
+                #     elif self.board[x][y-1] == 22:
 
-                        self.board[x][y] = 22
-                        x , y = self.slip_left(x , y , self.i , self.j)
-                        self.board[x][y] = 2
+                #         self.board[x][y] = 22
+                #         x , y = self.slip_left(x , y , self.i , self.j)
+                #         self.board[x][y] = 2
                     
-                    elif self.board[x][y-1] == 0:
+                #     elif self.board[x][y-1] == 0:
 
-                        self.board[x][y] = 22
-                        self.board[x][y-1] = 2
+                #         self.board[x][y] = 22
+                #         self.board[x][y-1] = 2
 
-                elif key == arcade.key.RIGHT:
-                    if(y==9 and self.board[x][y]==2):
-                            self.board[x][y] = 2                    # x , y = self.get_human_pos()
-                    elif self.board[x][y+1] == 22:
+                # elif key == arcade.key.RIGHT:
+                #     if(y==9 and self.board[x][y]==2):
+                #             self.board[x][y] = 2                    # x , y = self.get_human_pos()
+                #     elif self.board[x][y+1] == 22:
 
-                        self.board[x][y] = 22
-                        x , y = self.slip_right(x , y ,self.i , self.j)
-                        self.board[x][y] = 2
+                #         self.board[x][y] = 22
+                #         x , y = self.slip_right(x , y ,self.i , self.j)
+                #         self.board[x][y] = 2
 
                     
                             
-                    elif self.board[x][y+1] == 0:
+                #     elif self.board[x][y+1] == 0:
 
-                        self.board[x][y] = 22
-                        self.board[x][y+1] = 2
+                #         self.board[x][y] = 22
+                #         self.board[x][y+1] = 2
 
                 self.score()
                 # self.check_win()
