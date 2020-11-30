@@ -69,6 +69,21 @@ class Snail(arcade.View):
                     
                 elif self.board[i][j] == 22:
                     self.count2 = self.count2 + 1
+    def get_human_pos(self):
+        for row in range(len(self.board)):
+            for col in range(len(self.board)):
+                if self.board[row][col] == 1:
+                    # print (row, col)
+                    return row , col
+    def get_bot_pos(self):
+        self.c_position = ''
+        for row in range(len(self.board)):
+            for col in range(len(self.board)):
+                if self.board[row][col] == 2:
+                    return row ,col
+                    
+                # print(self.tempboard)
+                # print(c_position)
 
     def possible_move(self , x , y , i , j):
            
@@ -78,7 +93,8 @@ class Snail(arcade.View):
             return True
         return False
     def heuristic(self , x , y):
-        temp = 100
+        # temp = 100
+        # h = 0
         best_x = None
         best_y = None
         #best serach to reach oppenet using empty spaces
@@ -93,6 +109,9 @@ class Snail(arcade.View):
                         # hx,hy=self.get_human_pos()
                         # h=abs(i-hx)+abs(j-hy)
                         # if(temp>h):
+                            
+                        #     best_x = i
+                        #     best_y = j
                      
         #if there is no  empty sapce then slip
         # if(best_x==None):
@@ -270,21 +289,6 @@ class Snail(arcade.View):
 
         #                 self.win = "draw"
 
-    def get_human_pos(self):
-        for row in range(len(self.board)):
-            for col in range(len(self.board)):
-                if self.board[row][col] == 1:
-                    # print (row, col)
-                    return row , col
-    def get_bot_pos(self):
-        self.c_position = ''
-        for row in range(len(self.board)):
-            for col in range(len(self.board)):
-                if self.board[row][col] == 2:
-                    return row ,col
-                    
-                # print(self.tempboard)
-                # print(c_position)
     def on_show(self):
         # arcade.set_background_color(arcade.color.APPLE_GREEN)
         pass
