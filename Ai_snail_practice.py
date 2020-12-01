@@ -27,6 +27,10 @@ class Snail(arcade.View):
         self.turn = 1
         self.count1 = 0
         self.count2 = 0
+        self.pre_count1 = 0
+        self.pre_count2 = 0
+        self.temp1 = 0
+        self.temp2 = 0
         # self.human2sprite = arcade.sprite("red_pac.png" , 0.5)
         # self.human1sprite = arcade.sprite("yellow_pac.png" , 0.5)
         self.win = "0"
@@ -58,6 +62,8 @@ class Snail(arcade.View):
             if self.board[x][y+1] == 0 or self.board[x][y+1]==i or self.board[x][y+1]==j:
                 return x , y
     def score(self):
+        self.pre_count1=self.count1
+        self.pre_count2=self.count2
         self.count1=0
         self.count2=0
         for i in range(0,10):
@@ -92,90 +98,85 @@ class Snail(arcade.View):
         elif(((j-1 == y and y >= 0 )or (j+1 == y and y <= 9)) and i == x):
             return True
         return False
-    def heuristic(self,x,y):
-        temp=100
-        best_x=None
-        best_y=None
-        temp_x=None
-        temp_y=None
-        previous_x=None
-        previous_y=None
+    def heuristic(self , x , y):
+        
+        temp = 100
+        best_x = None
+        best_y = None
+        temp_x = None
+        temp_y = None
+        previous_x = None
+        previous_y = None
         #best serach to reach oppenet using empty spaces
         for i in range(0,10):
             for j in range(0,10):
                 #Chek empty spaces
-                if(self.board[i][j]==0):
+                if(self.board[i][j] == 0):
                     #check valid move
-                    valid=self.possible_move(x,y,i,j)
-                    if(valid==True):
+                    valid = self.possible_move(x , y , i , j)
+                    if(valid == True):
                         #store them in temporarily
                         #because if it is not minimizing the distance the bot will not 
                         #take that move due to temp>h condition
-                        temp_x=i
-                        temp_y=j
-                        hx,hy=self.get_human_pos()
+                        temp_x = i
+                        temp_y = j
+                        hx , hy = self.get_human_pos()
                         #check the distance
-                        h=abs(i-hx)+abs(j-hy)
+                        h = abs(i-hx) + abs(j-hy)
                         #suppose there were two valid move having same distance
                         #bot will only take the first one
                         #now check the movemnet towards center 
                         #get the best one
-                        if(previous_x!=None):
-                            h2=abs(previous_x-5)+abs(previous_y-5)
-                            h1=abs(i-5)+abs(j-5)
-                            if(h1<h2):
-                                h=h-2
-                        if(temp>h):
-                            temp=h
-                            best_x=i
-                            best_y=j
-                            previous_x=i
-                            previous_y=j
+                        if(previous_x != None):
+                            h2 = abs(previous_x-5) + abs(previous_y-5)
+                            h1 = abs(i-5) + abs(j-5)
+                            if(h1 < h2):
+                                h = h-2
+                        if(temp > h):
+                            temp = h
+                            best_x = i
+                            best_y = j
+                            previous_x = i
+                            previous_y = j
                         #when all sides have spashes or sprite even temp_x can b none
-        if(best_x==None and temp_x!=None):
-            best_x=temp_x
-            best_y=temp_y
-        elif(temp_x==None):
+        if(best_x == None and temp_x != None):
+            best_x = temp_x
+            best_y = temp_y
+        elif(temp_x == None):
             #here we will implement strategy about splash movements
-            i,j=self.get_bot_pos()
-            for k in range(1,10):
+            i , j = self.get_bot_pos()
+            for k in range(0,10):
                 #if(board[i+k][j]==22)
-                if(i+k<10 and  self.board[i+k][j]==0 and self.board[i+k-1][j]==22 ):
-                    return (i+k-1),j
-                elif(i-k>0 and self.board[i-k][j]==0 and self.board[i-k+1][j]==22):
-                    return (i-k+1),j
-                elif(j+k<10 and self.board[i][j+k]==0 and self.board[i][j+k-1]==22):
-                    return i,(j+k-1)
-                elif(j-k>0 and self.board[i][j-k]==0 and self.board[i][j+k+1]==22 ):
-                    return i,(j-k+1)
+                if(i+k < 10 and  self.board[i+k][j] == 0 and self.board[i+k-1][j]==22):
+                    return (i+k-1) , j
+                elif(i-k > 0 and self.board[i-k][j]==0 and self.board[i-k+1][j]==22):
+                    return (i-k+1) , j
+                elif(j+k < 10 and self.board[i][j+k]==0 and self.board[i][j+k-1]==22):
+                    return i , (j+k-1)
+                elif(j-k > 0 and self.board[i][j-k]==0 and self.board[i][j-k+1]==22):
+                    return i , (j-k+1)
          #now design a strategy to if there is no 0
-            # for k in range(1,10):
-            #     if(i+k==9):
-            #         best_x=i+k-1
-            #         best_y=j
-
-            #     elif(i-k==0):
-            #         best_x=i-k+1
-            #         best_y=j
-
-            #     elif(j+k==9):
-            #         best_x=i
-            #         best_y=j+k-1
-
-            #     elif(j-k==0):
-            #         best_x=i
-            #         best_y=j-k+1            
+         #this is test case but still not completed
+            for k in range(0,10):
+                if(i+k < 10 and  (self.board[i+k][j]==11 or i+k==10) ):
+                    return (i+k-1) , j
+                elif(i-k > 0 and (self.board[i-k][j]==11 or i-k==0)):
+                    return (i-k+1) , j
+                elif(j+k < 10 and (self.board[i][j+k]==11 or j+k==10)):
+                    return i , (j+k-1)
+                elif(j-k>0 and (self.board[i][j-k]==11 or j-k==0)):
+                    return i , (j-k+1)
         return (best_x,best_y)
     def on_key_press(self , key , modifiers):
-        
         if self.state == "GameMenu":
-            if key == arcade.key.SPACE:
+            if key:
                 self.state = "GameOn"
         if self.state == "GameOn":
             if key == arcade.key.ESCAPE:
                 exit(0)
             if self.turn == 1:
                 self.turn = 2
+                
                 self.i = 22
                 self.j = 2
                 x , y = self.get_human_pos()
@@ -236,78 +237,37 @@ class Snail(arcade.View):
                     elif self.board[x][y+1] == 0:
                         self.board[x][y] = 11
                         self.board[x][y+1] = 1
+                
                 self.score()
                 self.check_win()
-            elif self.turn == 2:
-                self.turn=1
+            if self.turn == 2:
+                self.turn = 1                
                 self.i = 11
                 self.j = 1
                 x , y = self.get_bot_pos()
-                
                 qx , qy = self.heuristic(x , y) 
-                self.board[qx][qy] = 2
-                self.board[x][y] = 22               
-                # if key == arcade.key.UP:
-                #     if(x==0 and self.board[x][y]==2):
-                #             self.board[x][y] = 2
-                #     elif self.board[x-1][y] == 22:
-                #             self.board[x][y] = 22
-                #             x , y = self.slip_up(x , y , self.i , self.j)
-                #             self.board[x][y] = 2
-                #     elif self.board[x-1][y] == 0:
-                #         self.board[x][y] = 22
-                #         self.board[x-1][y] = 2
-
-                # elif key == arcade.key.DOWN:
-                #     if(x==9 and self.board[x][y]==2):
-                #             self.board[x][y] = 2                    
-                #     elif self.board[x+1][y] == 22:
-
-                #         self.board[x][y] = 22
-                #         x , y = self.slip_down(x , y , self.i , self.j)
-                #         self.board[x][y] = 2
-              
-                #     elif self.board[x+1][y] == 0:
-                            
-                #         self.board[x][y] = 22
-                #         self.board[x+1][y] = 2
-                            
-                # elif key == arcade.key.LEFT:
-                #     if(y==0 and self.board[x][y]==2):
-                #             self.board[x][y] = 2
-                #     elif self.board[x][y-1] == 22:
-
-                #         self.board[x][y] = 22
-                #         x , y = self.slip_left(x , y , self.i , self.j)
-                #         self.board[x][y] = 2
-                    
-                #     elif self.board[x][y-1] == 0:
-
-                #         self.board[x][y] = 22
-                #         self.board[x][y-1] = 2
-
-                # elif key == arcade.key.RIGHT:
-                #     if(y==9 and self.board[x][y]==2):
-                #             self.board[x][y] = 2                    # x , y = self.get_human_pos()
-                #     elif self.board[x][y+1] == 22:
-
-                #         self.board[x][y] = 22
-                #         x , y = self.slip_right(x , y ,self.i , self.j)
-                #         self.board[x][y] = 2
-
-                    
-                            
-                #     elif self.board[x][y+1] == 0:
-
-                #         self.board[x][y] = 22
-                #         self.board[x][y+1] = 2
-
+                if(qx != None):
+                    self.board[x][y] = 22               
+                    self.board[qx][qy] = 2
                 self.score()
-                # self.check_win()
-        
+                        
                 self.check_win()
+                
               
     def check_win(self):
+        # if(self.pre_count1 > 0 and self.pre_count1 == self.count1):
+        #     self.temp1 += 1
+        #     if(self.temp1 >= 15):
+        #         if(self.count1 > self.count2):
+        #             self.state = 'GameOver'
+        #             self.win = "Player_1"
+        # if(self.pre_count2 > 0 and self.pre_count2 == self.count2):
+        #     self.temp2 += 1
+        #     if(self.temp2 >= 15):
+        #         if(self.count2 > self.count1):
+        #             self.state = 'GameOver'
+        #             self.win = "Player_2"
+        
         if self.count1 > 49:
             self.state='GameOver'
             self.win = "Player_1"
@@ -372,7 +332,7 @@ class Snail(arcade.View):
                 
                 
             if self.win == "Player_2":
-                arcade.draw_text("Player 2 Wins!", 550 , 400, arcade.color.WHITE, font_size=100, anchor_x="center")
+                arcade.draw_text("BOT Wins!", 550 , 400, arcade.color.WHITE, font_size=100, anchor_x="center")
                 arcade.draw_text("Click to continue", 550, 250, arcade.color.WHITE, font_size=50, anchor_x="center")
 
             if self.win == "draw":
