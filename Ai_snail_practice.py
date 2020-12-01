@@ -92,45 +92,80 @@ class Snail(arcade.View):
         elif(((j-1 == y and y >= 0 )or (j+1 == y and y <= 9)) and i == x):
             return True
         return False
-    def heuristic(self , x , y):
-        # temp = 100
-        # h = 0
-        best_x = None
-        best_y = None
+    def heuristic(self,x,y):
+        temp=100
+        best_x=None
+        best_y=None
+        temp_x=None
+        temp_y=None
+        previous_x=None
+        previous_y=None
         #best serach to reach oppenet using empty spaces
-        for i in range(0 , 10):
-            for j in range(0 , 10):
-                if(self.board[i][j] == 0):
-                    valid=self.possible_move(x , y , i , j)
-                    if(valid == True):
-                        # temp=h
-                        best_x = i
-                        best_y = j
-                        # hx,hy=self.get_human_pos()
-                        # h=abs(i-hx)+abs(j-hy)
-                        # if(temp>h):
-                            
-                        #     best_x = i
-                        #     best_y = j
-                     
-        #if there is no  empty sapce then slip
-        # if(best_x==None):
-        #     for i in range(0,10):
-        #         for j in range(0,10):
-        #             if(board[i][j]==22):
-        #                 valid=self.possible_move(x,y,i,j)
-        #                 if(valid==True):
-        #                     hx,hy=self.get_human_pos()
-        #                     h=abs(i-hx)+abs(j-hy)
-        #                     if(temp>h):
-        #                         temp=h
-        #                         best_x=i
-        #                         best_y=j
-            
-        return (best_x , best_y)        
+        for i in range(0,10):
+            for j in range(0,10):
+                #Chek empty spaces
+                if(self.board[i][j]==0):
+                    #check valid move
+                    valid=self.possible_move(x,y,i,j)
+                    if(valid==True):
+                        #store them in temporarily
+                        #because if it is not minimizing the distance the bot will not 
+                        #take that move due to temp>h condition
+                        temp_x=i
+                        temp_y=j
+                        hx,hy=self.get_human_pos()
+                        #check the distance
+                        h=abs(i-hx)+abs(j-hy)
+                        #suppose there were two valid move having same distance
+                        #bot will only take the first one
+                        #now check the movemnet towards center 
+                        #get the best one
+                        if(previous_x!=None):
+                            h2=abs(previous_x-5)+abs(previous_y-5)
+                            h1=abs(i-5)+abs(j-5)
+                            if(h1<h2):
+                                h=h-2
+                        if(temp>h):
+                            temp=h
+                            best_x=i
+                            best_y=j
+                            previous_x=i
+                            previous_y=j
+                        #when all sides have spashes or sprite even temp_x can b none
+        if(best_x==None and temp_x!=None):
+            best_x=temp_x
+            best_y=temp_y
+        elif(temp_x==None):
+            #here we will implement strategy about splash movements
+            i,j=self.get_bot_pos()
+            for k in range(1,10):
+                #if(board[i+k][j]==22)
+                if(i+k<10 and  self.board[i+k][j]==0 and self.board[i+k-1][j]==22 ):
+                    return (i+k-1),j
+                elif(i-k>0 and self.board[i-k][j]==0 and self.board[i-k+1][j]==22):
+                    return (i-k+1),j
+                elif(j+k<10 and self.board[i][j+k]==0 and self.board[i][j+k-1]==22):
+                    return i,(j+k-1)
+                elif(j-k>0 and self.board[i][j-k]==0 and self.board[i][j+k+1]==22 ):
+                    return i,(j-k+1)
+         #now design a strategy to if there is no 0
+            # for k in range(1,10):
+            #     if(i+k==9):
+            #         best_x=i+k-1
+            #         best_y=j
 
-                
+            #     elif(i-k==0):
+            #         best_x=i-k+1
+            #         best_y=j
 
+            #     elif(j+k==9):
+            #         best_x=i
+            #         best_y=j+k-1
+
+            #     elif(j-k==0):
+            #         best_x=i
+            #         best_y=j-k+1            
+        return (best_x,best_y)
     def on_key_press(self , key , modifiers):
         
         if self.state == "GameMenu":
