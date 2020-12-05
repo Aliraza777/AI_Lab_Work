@@ -65,10 +65,11 @@ class Snail(arcade.View):
             arcade.draw_lrwh_rectangle_textured(0 , 0 , 1100 , 800 , background)
             
             arcade.draw_text("Snails Game" , 550 , 400 , arcade.color.WHITE , font_size=50 , anchor_x="center")
-            arcade.draw_text("Press any key to start the Game" , 550 , 300 , arcade.color.WHITE , font_size=30 , anchor_x="center")
+            arcade.draw_text("Press any key ..." , 550 , 300 , arcade.color.WHITE , font_size=30 , anchor_x="center")
         
         
         elif self.state == "GameInstructions":
+
             arcade.set_background_color(arcade.color.BLACK)
             
             arcade.draw_text(" Game Instructions " , 260 , 700 , arcade.color.WHITE , font_size = 60  )
@@ -162,7 +163,7 @@ class Snail(arcade.View):
 ##################
 
     def get_bot_pos(self):
-        self.c_position = ''
+        
         for row in range(len(self.board)):
             for col in range(len(self.board)):
                 if self.board[row][col] == 2:
@@ -179,9 +180,10 @@ class Snail(arcade.View):
 ###################
 #When player presses up on its splash 
 ###################
-    def slip_up(self , x , y , i , j):
+
+    def slip_up(self , x , y ):
         for x in range(x , 0 , -1):
-            if self.board[x-1][y] == 0 or self.board[x-1][y]== i or self.board[x-1][y]==j:
+            if self.board[x-1][y] == 0 or self.board[x-1][y] == 2 or self.board[x-1][y] == 22:
                 return x , y
             if(x - 1 == 0):
                 return x-1 , y
@@ -191,9 +193,9 @@ class Snail(arcade.View):
 #When player presses down on its splash 
 ###################
 
-    def slip_down(self , x , y , i ,j):
+    def slip_down(self , x , y):
         for x in range(x , 9 , 1):
-            if self.board[x+1][y] == 0 or self.board[x+1][y]==i or self.board[x+1][y]==j:
+            if self.board[x+1][y] == 0 or self.board[x+1][y] == 2 or self.board[x+1][y] == 22:
                 return x , y
             if(x + 1 == 9):
                 return x+1 , y
@@ -203,9 +205,9 @@ class Snail(arcade.View):
 #When player presses left on its splash 
 ###################
 
-    def slip_left(self , x , y , i ,j):
+    def slip_left(self , x , y ):
         for y in range(y , 0 , -1):
-            if self.board[x][y-1] == 0 or self.board[x][y-1]==i or self.board[x][y-1]==j:
+            if self.board[x][y-1] == 0 or self.board[x][y-1] == 2 or self.board[x][y-1] == 22:
                 return x , y
             if(y - 1 == 0):
                 return x , y-1
@@ -215,9 +217,9 @@ class Snail(arcade.View):
 #When player presses right on its splash 
 ###################
 
-    def slip_right(self , x , y , i ,j):
+    def slip_right(self , x , y ):
         for y in range(y , 9 , 1):
-            if self.board[x][y+1] == 0 or self.board[x][y+1]==i or self.board[x][y+1]==j:
+            if self.board[x][y+1] == 0 or self.board[x][y+1] == 2 or self.board[x][y+1] == 22:
                 return x , y
             if(y + 1 == 9):
                 return x , y+1
@@ -228,8 +230,8 @@ class Snail(arcade.View):
 ###################
 
     def score(self):
-        self.pre_count1 = self.count1
-        self.pre_count2 = self.count2
+        # self.pre_count1 = self.count1
+        # self.pre_count2 = self.count2
         self.count1=0
         self.count2=0
         for i in range(0,10):
@@ -316,13 +318,13 @@ class Snail(arcade.View):
          
          
             for k in range(0,10):
-                if(bx+k < 10 and  (self.board[bx+k][by] == 11 or bx+k == 10) ):
+                if(bx+k < 10 and  (self.board[bx+k][by] == 11 or self.board[bx+k][by] == 1 or bx+k == 10) ):
                     return (bx+k-1) , by
-                elif(bx-k > 0 and (self.board[bx-k][by] == 11 or bx-k == 0)):
+                elif(bx-k > 0 and (self.board[bx-k][by] == 11 or self.board[bx-k][by] == 1 or bx-k == 0)):
                     return (bx-k+1) , by
-                elif(by+k < 10 and (self.board[bx][by+k] == 11 or by+k == 10)):
+                elif(by+k < 10 and (self.board[bx][by+k] == 11 or self.board[bx][by+k] == 1 or by+k == 10)):
                     return bx , (by+k-1)
-                elif(by-k>0 and (self.board[bx][by-k] == 11 or by-k == 0)):
+                elif(by-k>0 and (self.board[bx][by-k] == 11 or self.board[bx][by-k] == 1 or by-k == 0)):
                     return bx , (by-k+1)
         return (best_x,best_y)
 
@@ -349,8 +351,6 @@ class Snail(arcade.View):
 
             if self.turn == 1:
                
-                self.i = 22
-                self.j = 2
                 x , y = self.get_human_pos()
                         
                 if key == arcade.key.UP:
@@ -359,7 +359,7 @@ class Snail(arcade.View):
 
                     elif self.board[x-1][y] == 11:
                             self.board[x][y] = 11
-                            x , y = self.slip_up(x , y , self.i , self.j)
+                            x , y = self.slip_up(x , y )
                             self.board[x][y] = 1
                     
                     elif self.board[x-1][y] == 0:
@@ -377,7 +377,7 @@ class Snail(arcade.View):
                     # x , y = self.get_human_pos()
                     elif(self.board[x+1][y] == 11):
                         self.board[x][y] = 11
-                        x , y = self.slip_down(x , y , self.i , self.j)
+                        x , y = self.slip_down(x , y)
                         self.board[x][y] = 1
                         
                     elif self.board[x+1][y] == 0:
@@ -392,7 +392,7 @@ class Snail(arcade.View):
 
                     elif(self.board[x][y-1] == 11):
                         self.board[x][y] = 11
-                        x , y = self.slip_left(x , y , self.i , self.j)
+                        x , y = self.slip_left(x , y )
                         self.board[x][y] = 1
                    
                     elif self.board[x][y-1] == 0:
@@ -406,7 +406,7 @@ class Snail(arcade.View):
 
                     elif(self.board[x][y+1] == 11):
                         self.board[x][y] = 11
-                        x , y = self.slip_right(x , y , self.i , self.j)
+                        x , y = self.slip_right(x , y)
                         self.board[x][y] = 1
                     elif self.board[x][y+1] == 0:
                         self.board[x][y] = 11
@@ -418,8 +418,7 @@ class Snail(arcade.View):
                 ##################### ~~~ Bot's Turn ~~~ ####################
 
             if self.turn == 2:
-                self.i = 11
-                self.j = 1
+            
                 x , y = self.get_bot_pos()
                 qx , qy = self.heuristic(x , y)
                  
